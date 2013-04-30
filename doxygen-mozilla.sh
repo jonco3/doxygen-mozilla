@@ -2,7 +2,7 @@
 
 set -e
 
-[ hash dot ] || {
+hash dot || {
   echo "Must install 'dot' first from graphviz"
   exit
 }
@@ -27,5 +27,15 @@ set -e
   hg pull
 )
 
-pwd
-./doxygen-svn/bin/doxygen doxygen.cfg
+#./doxygen-svn/bin/doxygen doxygen.cfg
+#scp -r docs/html people.mozilla.org:public_html/doxygen
+
+for f in configs/*
+do
+  [ -e out ] && {
+    rm -rf out
+  }
+  mkdir out
+  ./doxygen-svn/bin/doxygen $f
+  scp -r out/docs/html people.mozilla.org:public_html/doxygen/$(basename $f)
+done
