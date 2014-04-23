@@ -25,6 +25,7 @@ hash dot || {
 (
   cd tree
   hg pull
+  hg update
 )
 
 #./doxygen-svn/bin/doxygen doxygen.cfg
