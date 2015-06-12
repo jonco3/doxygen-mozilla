@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -x
 
 hash dot || {
   echo "Must install 'dot' first from graphviz"
@@ -18,7 +19,7 @@ hash dot || {
 }
 
 [ -e tree ] || {
-  hg clone ssh://hg.mozilla.org/mozilla-central .
+  hg clone http://hg.mozilla.org/mozilla-central tree
   echo test
 }
 
