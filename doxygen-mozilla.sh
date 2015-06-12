@@ -45,3 +45,5 @@ do
     tar cfv - . | ssh people.mozilla.org -C "mkdir public_html/doxygen/$(basename $f); tar -xvf - -C public_html/doxygen/$(basename $f); chmod -R 755 public_html/doxygen/$(basename $f)"
   )
 done
+
+echo done
