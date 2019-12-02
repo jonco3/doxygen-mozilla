@@ -1,0 +1,11 @@
+# Doxyfile 1.5.5
+
+@INCLUDE = config-main
+
+PROJECT_NAME           = "SpiderMonkey - Mozilla"
+
+INPUT                  = ./tree/js/src
+
+OUTPUT_DIRECTORY       = ./docs/js
+
+INCLUDE_PATH           = ./tree/mfbt ./tree/nsprpub/pr/include ./tree/js/public

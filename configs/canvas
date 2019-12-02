@@ -1,0 +1,9 @@
+# Doxyfile 1.5.5
+
+@INCLUDE = config-main
+
+PROJECT_NAME           = "Canvas - Mozilla"
+
+INPUT                  = ./tree/dom/canvas
+
+OUTPUT_DIRECTORY       = ./docs/canvas

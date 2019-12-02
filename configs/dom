@@ -1,0 +1,9 @@
+# Doxyfile 1.5.5
+
+@INCLUDE = config-main
+
+PROJECT_NAME           = "DOM - Mozilla"
+
+INPUT                  = ./tree/dom
+
+OUTPUT_DIRECTORY       = ./docs/dom

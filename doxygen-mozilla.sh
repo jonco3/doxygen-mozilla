@@ -1,8 +1,14 @@
 #!/bin/bash
 
-set -euf -o pipefail
+set -eu -o pipefail
 
-for TOOL in dot git cmake bison; do
+if [[ $# -ne 0 ]]; then
+    CONFIGS=$@
+else
+    CONFIGS=configs/*
+fi
+
+for TOOL in dot git cmake bison flex; do
     if ! hash $TOOL; then
         echo "Please install required tool '$TOOL'"
         exit
@@ -11,24 +17,21 @@ done
 
 set -x
 
-if [[ ! -e doxygen ]]; then
-    git clone https://github.com/doxygen/doxygen.git doxygen
+if [[ ! -e doxygen-src ]]; then
+    git clone https://github.com/doxygen/doxygen.git doxygen-src
 fi
 
-DOXYGEN=doxygen/build/bin/doxygen
-
-echo $PATH
-export PATH
+DOXYGEN=doxygen-build/bin/doxygen
 
 if [[ ! -e $DOXYGEN ]]; then
-    cd doxygen
-    mkdir -p build
-    cd build
-    cmake -G "Unix Makefiles" ..
-    make clean
-    make
+    mkdir -p doxygen-build
+    (
+        cd doxygen-build
+        cmake -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles" ../doxygen-src
+        make clean
+        make -j8
+    )
 fi
-
 
 if [[ ! -e tree ]]; then
     hg clone http://hg.mozilla.org/mozilla-central ./tree
@@ -36,21 +39,18 @@ fi
 
 (
     cd tree
-    hg pull --update
+    #hg pull --update
 )
 
-#$DOXYGEN doxygen.cfg
+#if [[ -e docs ]]; then
+#    rm -rf docs
+#fi
+#mkdir docs
 
-if [[ -e out ]]; then
-    rm -rf out
-fi
-
-mkdir out
-
-for CONFIG in configs/*; do
+for CONFIG in $CONFIGS; do
     $DOXYGEN $CONFIG
 done
 
-chmod -R 755 out/docs/html
+chmod -R 755 docs
 
 echo done
