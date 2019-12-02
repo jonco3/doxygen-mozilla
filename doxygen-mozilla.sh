@@ -1,49 +1,56 @@
 #!/bin/bash
 
-set -e
+set -euf -o pipefail
+
+for TOOL in dot git cmake bison; do
+    if ! hash $TOOL; then
+        echo "Please install required tool '$TOOL'"
+        exit
+    fi
+done
+
 set -x
 
-hash dot || {
-  echo "Must install 'dot' first from graphviz"
-  exit
-}
+if [[ ! -e doxygen ]]; then
+    git clone https://github.com/doxygen/doxygen.git doxygen
+fi
 
-[ -e doxygen-svn ] || {
-  svn co https://doxygen.svn.sourceforge.net/svnroot/doxygen/trunk doxygen-svn
-}
+DOXYGEN=doxygen/build/bin/doxygen
 
-[ -e doxygen-svn/bin/doxygen ] || {
-  cd doxygen-svn
-  ./configure
-  make
-}
+echo $PATH
+export PATH
 
-[ -e tree ] || {
-  hg clone http://hg.mozilla.org/mozilla-central tree
-  echo test
-}
+if [[ ! -e $DOXYGEN ]]; then
+    cd doxygen
+    mkdir -p build
+    cd build
+    cmake -G "Unix Makefiles" ..
+    make clean
+    make
+fi
+
+
+if [[ ! -e tree ]]; then
+    hg clone http://hg.mozilla.org/mozilla-central ./tree
+fi
 
 (
-  cd tree
-  hg pull
-  hg update
+    cd tree
+    hg pull --update
 )
 
-#./doxygen-svn/bin/doxygen doxygen.cfg
-#scp -r docs/html people.mozilla.org:public_html/doxygen
+#$DOXYGEN doxygen.cfg
 
-for f in configs/*
-do
-  [ -e out ] && {
+if [[ -e out ]]; then
     rm -rf out
-  }
-  mkdir out
-  ./doxygen-svn/bin/doxygen $f
-  chmod -R 755 out/docs/html
-  (
-    cd out/docs/html
-    tar cfv - . | ssh people.mozilla.org -C "mkdir public_html/doxygen/$(basename $f); tar -xvf - -C public_html/doxygen/$(basename $f); chmod -R 755 public_html/doxygen/$(basename $f)"
-  )
+fi
+
+mkdir out
+
+for CONFIG in configs/*; do
+    $DOXYGEN $CONFIG
 done
+
+chmod -R 755 out/docs/html
 
 echo done
