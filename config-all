@@ -1,0 +1,9 @@
+# Doxyfile 1.5.5
+
+@INCLUDE = config-main
+
+PROJECT_NAME           = "Mozilla Central"
+
+INPUT                  = ./tree
+
+OUTPUT_DIRECTORY       = ./docs/all
