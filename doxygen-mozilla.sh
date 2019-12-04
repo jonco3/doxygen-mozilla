@@ -39,13 +39,13 @@ fi
 
 (
     cd tree
-    #hg pull --update
+    hg pull --update
 )
 
-#if [[ -e docs ]]; then
-#    rm -rf docs
-#fi
-#mkdir docs
+if [[ -e docs ]]; then
+    rm -rf docs
+fi
+mkdir docs
 
 for CONFIG in $CONFIGS; do
     $DOXYGEN $CONFIG
